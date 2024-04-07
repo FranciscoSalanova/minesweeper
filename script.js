@@ -52,7 +52,7 @@ function listMinesLeft() {
 
 const messageText = document.querySelector(".subtext")
 
-/** Función que gestiona lo que debe pasar cuando finaliza el juego, sea que el jugador haya ganado o haya perdido. */
+/** Función que maneja lo que debe pasar cuando finaliza el juego, sea que el jugador haya ganado o haya perdido. */
 function checkGameEnd() {
   const win = checkWin(board)
   const lose = checkLose(board)
