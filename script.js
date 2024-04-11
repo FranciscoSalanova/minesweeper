@@ -19,6 +19,7 @@ title.addEventListener("click", () => {
 
 const boardElement = document.querySelector(".board")
 boardElement.style.setProperty("--size", BOARD_SIZE) // mediante la custom property "size" se asigna el tamaño de la grilla
+
 const board = createBoard(BOARD_SIZE, NUMBER_OF_MINES)
 // una vez generado el array de filas que contienen las celdas, se renderizan las mismas y se asignan EventListeners para los clicks del mouse
 board.forEach((row) => {
@@ -39,7 +40,7 @@ board.forEach((row) => {
 const mineCount = document.querySelector("[data-mine-count]")
 mineCount.textContent = NUMBER_OF_MINES
 
-/** Función que decrementa la cantidad de minas inicial a partir de la cantidad de celdas marcadas como sospechosas de contener una mina. */
+/** Decrementa la cantidad de minas inicial a partir de la cantidad de celdas marcadas como sospechosas de contener una mina. */
 function listMinesLeft() {
   const markedTilesCount = board.reduce((count, row) => {
     return (

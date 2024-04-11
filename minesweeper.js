@@ -10,7 +10,7 @@ export const TILE_STATUSES = {
 /** Genera un tablero mediante un array compuesto de arrays que contienen celdas. */
 export function createBoard(boardSize, numberOfMines) {
   const board = []
-  const minePositions = getMinePositions(boardSize, numberOfMines)
+  const minePositions = getMinePositions(boardSize, numberOfMines) // se obtienen las posiciones del tablero donde estarán las minas
 
   for (let x = 0; x < boardSize; x++) {
     const row = []
@@ -30,7 +30,6 @@ export function createBoard(boardSize, numberOfMines) {
           this.element.dataset.status = value
         },
       }
-
       row.push(tile)
     }
     board.push(row)
@@ -85,6 +84,7 @@ function positionMatch(posA, posB) {
   return posA.x === posB.x && posA.y === posB.y
 }
 
+/** Marca la baldosa cliqueada (click derecho). */
 export function markTile(tile) {
   if (
     tile.status !== TILE_STATUSES.HIDDEN &&
@@ -100,6 +100,7 @@ export function markTile(tile) {
   }
 }
 
+/** Revela el contenido de la baldosa cliqueada. */
 export function revealTile(board, tile) {
   if (tile.status !== TILE_STATUSES.HIDDEN) return // ya se hizo algún click
 
@@ -111,14 +112,16 @@ export function revealTile(board, tile) {
   tile.status = TILE_STATUSES.NUMBER
   const adjacentTiles = nearbyTiles(board, tile)
   const mines = adjacentTiles.filter((tile) => tile.mine)
+
   if (mines.length === 0) {
-    adjacentTiles.forEach(revealTile.bind(null, board))
+    adjacentTiles.forEach(revealTile.bind(null, board)) // en caso de no haber minas en las baldosas adyacentes, se ejecuta nuevamente la función para cada celda una de las baldosas
   } else {
     tile.element.textContent = mines.length
     tile.element.style.setProperty("font-size", "1.5rem")
   }
 }
 
+/** Devuelve un array con las baldosas adyacentes a la baldosa cliqueada. */
 function nearbyTiles(board, { x, y }) {
   const tiles = []
 
