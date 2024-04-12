@@ -15,11 +15,7 @@ export function createBoard(boardSize, numberOfMines) {
   for (let x = 0; x < boardSize; x++) {
     const row = []
     for (let y = 0; y < boardSize; y++) {
-      const element = document.createElement("div")
-      element.dataset.status = TILE_STATUSES.HIDDEN
-
       const tile = {
-        element,
         x,
         y,
         mine: minePositions.some(positionMatch.bind(null, { x, y })),

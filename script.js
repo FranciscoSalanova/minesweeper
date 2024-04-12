@@ -19,9 +19,51 @@ title.addEventListener("click", () => {
 
 const boardElement = document.querySelector(".board")
 boardElement.style.setProperty("--size", BOARD_SIZE) // mediante la custom property "size" se asigna el tamaño de la grilla
+let board = createBoard(BOARD_SIZE, NUMBER_OF_MINES)
 
-const board = createBoard(BOARD_SIZE, NUMBER_OF_MINES)
-// una vez generado el array de filas que contienen las celdas, se renderizan las mismas y se asignan EventListeners para los clicks del mouse
+function render() {
+  boardElement.innerHTML = ""
+
+  getTileElements().forEach((element) => {
+    boardElement.append(element)
+  })
+}
+
+function getTileElements() {
+  return board.flatMap((row) => {
+    return row.map(tileToElement)
+  })
+}
+
+function tileToElement(tile) {
+  const element = document.createElement("div")
+  element.dataset.status = tile.status
+  element.dataset.x = tile.x
+  element.dataset.y = tile.y
+  element.textContent = tile.adjacentMinesCount || ""
+
+  return element
+}
+
+boardElement.addEventListener("click", (e) => {
+  if (!e.target.matches("[data-status]")) return
+
+  revealTile(
+    board,
+    board[parseInt(e.target.dataset.x)][parseInt(e.target.dataset.y)]
+  )
+  render()
+})
+
+boardElement.addEventListener("contextmenu", (e) => {
+  if (!e.target.matches("[data-status]")) return
+
+  e.preventDefault()
+
+  markTile(board[parseInt(e.target.dataset.x)][parseInt(e.target.dataset.y)])
+  render()
+})
+
 board.forEach((row) => {
   row.forEach((tile) => {
     boardElement.append(tile.element)
