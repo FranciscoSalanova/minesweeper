@@ -1,10 +1,10 @@
 // Logic behind the game
 
 export const TILE_STATUSES = {
-  HIDDEN: "hidden",
-  MINE: "mine",
-  NUMBER: "number",
-  MARKED: "marked",
+  HIDDEN: 'hidden',
+  MINE: 'mine',
+  NUMBER: 'number',
+  MARKED: 'marked',
 }
 
 /** Genera un tablero mediante un array compuesto de arrays que contienen celdas. */
@@ -19,12 +19,7 @@ export function createBoard(boardSize, numberOfMines) {
         x,
         y,
         mine: minePositions.some(positionMatch.bind(null, { x, y })),
-        get status() {
-          return this.element.dataset.status
-        },
-        set status(value) {
-          this.element.dataset.status = value
-        },
+        status: TILE_STATUSES.HIDDEN,
       }
       row.push(tile)
     }
@@ -81,28 +76,39 @@ function positionMatch(posA, posB) {
 }
 
 /** Marca la baldosa cliqueada (click derecho). */
-export function markTile(tile) {
+export function markTile(board, { x, y }) {
+  const tile = board[x][y]
+
   if (
     tile.status !== TILE_STATUSES.HIDDEN &&
     tile.status !== TILE_STATUSES.MARKED
   ) {
-    return
+    return board
   }
 
   if (tile.status === TILE_STATUSES.MARKED) {
-    tile.status = TILE_STATUSES.HIDDEN
+    return replaceTile(
+      board,
+      { x, y },
+      { ...tile, status: TILE_STATUSES.HIDDEN }
+    )
   } else {
-    tile.status = TILE_STATUSES.MARKED
+    return replaceTile(
+      board,
+      { x, y },
+      { ...tile, status: TILE_STATUSES.MARKED }
+    )
   }
 }
 
 /** Revela el contenido de la baldosa cliqueada. */
-export function revealTile(board, tile) {
-  if (tile.status !== TILE_STATUSES.HIDDEN) return // ya se hizo algún click
+export function revealTile(board, { x, y }) {
+  const tile = board[x][y]
+
+  if (tile.status !== TILE_STATUSES.HIDDEN) return board
 
   if (tile.mine) {
-    tile.status = TILE_STATUSES.MINE
-    return
+    return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.MINE })
   }
 
   tile.status = TILE_STATUSES.NUMBER
@@ -113,8 +119,20 @@ export function revealTile(board, tile) {
     adjacentTiles.forEach(revealTile.bind(null, board)) // en caso de no haber minas en las baldosas adyacentes, se ejecuta nuevamente la función para cada celda una de las baldosas
   } else {
     tile.element.textContent = mines.length
-    tile.element.style.setProperty("font-size", "1.5rem")
+    tile.element.style.setProperty('font-size', '1.5rem')
   }
+}
+
+/** Devuelve una nueva baldosa que incluye la modificación de estado. */
+function replaceTile(board, position, newTile) {
+  return board.map((row, x) => {
+    return row.map((tile, y) => {
+      if (positionMatch(position, { x, y })) {
+        return newTile
+      }
+      return tile
+    })
+  })
 }
 
 /** Devuelve un array con las baldosas adyacentes a la baldosa cliqueada. */
