@@ -1,10 +1,10 @@
 // Logic behind the game
 
 export const TILE_STATUSES = {
-  HIDDEN: 'hidden',
-  MINE: 'mine',
-  NUMBER: 'number',
-  MARKED: 'marked',
+  HIDDEN: "hidden",
+  MINE: "mine",
+  NUMBER: "number",
+  MARKED: "marked",
 }
 
 /** Genera un tablero mediante un array compuesto de arrays que contienen celdas. */
@@ -111,16 +111,21 @@ export function revealTile(board, { x, y }) {
     return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.MINE })
   }
 
-  tile.status = TILE_STATUSES.NUMBER
   const adjacentTiles = nearbyTiles(board, tile)
   const mines = adjacentTiles.filter((tile) => tile.mine)
+  const newBoard = replaceTile(
+    board,
+    { x, y },
+    { ...tile, status: TILE_STATUSES.NUMBER, adjacentMinesCount: mines.length }
+  )
 
   if (mines.length === 0) {
-    adjacentTiles.forEach(revealTile.bind(null, board)) // en caso de no haber minas en las baldosas adyacentes, se ejecuta nuevamente la función para cada celda una de las baldosas
-  } else {
-    tile.element.textContent = mines.length
-    tile.element.style.setProperty('font-size', '1.5rem')
+    return adjacentTiles.reduce((b, t) => {
+      return revealTile(b, t)
+    }, newBoard)
   }
+
+  return newBoard
 }
 
 /** Devuelve una nueva baldosa que incluye la modificación de estado. */
