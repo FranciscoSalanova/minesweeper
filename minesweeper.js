@@ -1,4 +1,4 @@
-// Logic behind the game
+import { range, times } from "lodash/fp"
 
 export const TILE_STATUSES = {
   HIDDEN: "hidden",
@@ -8,25 +8,17 @@ export const TILE_STATUSES = {
 }
 
 /** Genera un tablero mediante un array compuesto de arrays que contienen celdas. */
-export function createBoard(boardSize, numberOfMines) {
-  const board = []
-  const minePositions = getMinePositions(boardSize, numberOfMines) // se obtienen las posiciones del tablero donde estarán las minas
-
-  for (let x = 0; x < boardSize; x++) {
-    const row = []
-    for (let y = 0; y < boardSize; y++) {
-      const tile = {
+export function createBoard(boardSize, minePositions) {
+  return times((x) => {
+    return times((y) => {
+      return {
         x,
         y,
         mine: minePositions.some(positionMatch.bind(null, { x, y })),
         status: TILE_STATUSES.HIDDEN,
       }
-      row.push(tile)
-    }
-    board.push(row)
-  }
-
-  return board
+    }, boardSize)
+  }, boardSize)
 }
 
 export function checkWin(board) {
@@ -48,30 +40,7 @@ export function checkLose(board) {
   })
 }
 
-/** Devuelve un array con las posiciones (x, y) de las minas en la grilla. */
-function getMinePositions(boardSize, numberOfMines) {
-  const positions = []
-
-  while (positions.length < numberOfMines) {
-    const position = {
-      x: randomNumber(boardSize),
-      y: randomNumber(boardSize),
-    }
-
-    if (!positions.some(positionMatch.bind(null, position))) {
-      positions.push(position)
-    }
-  }
-
-  return positions
-}
-
-/** Genera un número aleatorio para la determinación de una coordenada de una mina. */
-function randomNumber(size) {
-  return Math.floor(Math.random() * size)
-}
-
-function positionMatch(posA, posB) {
+export function positionMatch(posA, posB) {
   return posA.x === posB.x && posA.y === posB.y
 }
 
@@ -142,14 +111,11 @@ function replaceTile(board, position, newTile) {
 
 /** Devuelve un array con las baldosas adyacentes a la baldosa cliqueada. */
 function nearbyTiles(board, { x, y }) {
-  const tiles = []
+  const offsets = range(-1, 2)
 
-  for (let xOffset = -1; xOffset <= 1; xOffset++) {
-    for (let yOffset = -1; yOffset <= 1; yOffset++) {
-      const tile = board[x + xOffset]?.[y + yOffset]
-      if (tile) tiles.push(tile)
-    }
-  }
-
-  return tiles
+  return offsets.flatMap((xOffset) => {
+    return offsets.map((yOffset) => {
+      return board[x + xOffset]?.[y + yOffset]
+    })
+  })
 }
