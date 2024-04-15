@@ -21,6 +21,14 @@ export function createBoard(boardSize, minePositions) {
   }, boardSize)
 }
 
+export function markedTilesCount(board) {
+  return board.reduce((count, row) => {
+    return (
+      count + row.filter((tile) => tile.status === TILE_STATUSES.MARKED).length
+    )
+  }, 0)
+}
+
 export function checkWin(board) {
   return board.every((row) => {
     return row.every((tile) => {
@@ -113,9 +121,11 @@ function replaceTile(board, position, newTile) {
 function nearbyTiles(board, { x, y }) {
   const offsets = range(-1, 2)
 
-  return offsets.flatMap((xOffset) => {
-    return offsets.map((yOffset) => {
-      return board[x + xOffset]?.[y + yOffset]
+  return offsets
+    .flatMap((xOffset) => {
+      return offsets.map((yOffset) => {
+        return board[x + xOffset]?.[y + yOffset]
+      })
     })
-  })
+    .filter((tile) => tile != null)
 }

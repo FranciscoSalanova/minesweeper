@@ -1,5 +1,3 @@
-// Display/UI of the game
-
 import {
   createBoard,
   markTile,
@@ -8,18 +6,19 @@ import {
   checkWin,
   checkLose,
   positionMatch,
+  markedTilesCount,
 } from "./minesweeper.js"
 
 const BOARD_SIZE = 10
-const NUMBER_OF_MINES = 10
+const NUMBER_OF_MINES = 1
 
 const title = document.querySelector(".title")
 title.addEventListener("click", () => {
-  window.location.reload() // se puede reiniciar el juego haciendo click en el título "Minesweeper"
+  window.location.reload()
 })
 
 const boardElement = document.querySelector(".board")
-boardElement.style.setProperty("--size", BOARD_SIZE) // mediante la custom property "size" se asigna el tamaño de la grilla
+boardElement.style.setProperty("--size", BOARD_SIZE)
 const mineCount = document.querySelector("[data-mine-count]")
 mineCount.textContent = NUMBER_OF_MINES
 
@@ -29,6 +28,7 @@ let board = createBoard(
 )
 render()
 
+/** Renderiza un nuevo tablero cada vez que haya que mostrar un cambio en el juego. */
 function render() {
   boardElement.innerHTML = ""
   checkGameEnd()
@@ -39,12 +39,14 @@ function render() {
   listMinesLeft()
 }
 
+/** Devuelve un array con todas los datos de todas las baldosas a mostrar en el tablero. */
 function getTileElements() {
   return board.flatMap((row) => {
     return row.map(tileToElement)
   })
 }
 
+/** Devuelve un div que representa una baldosa en el tablero. */
 function tileToElement(tile) {
   const element = document.createElement("div")
   element.dataset.status = tile.status
@@ -81,13 +83,7 @@ boardElement.addEventListener("contextmenu", (e) => {
 
 /** Decrementa la cantidad de minas inicial a partir de la cantidad de celdas marcadas como sospechosas de contener una mina. */
 function listMinesLeft() {
-  const markedTilesCount = board.reduce((count, row) => {
-    return (
-      count + row.filter((tile) => tile.status === TILE_STATUSES.MARKED).length
-    )
-  }, 0)
-
-  mineCount.textContent = NUMBER_OF_MINES - markedTilesCount
+  mineCount.textContent = NUMBER_OF_MINES - markedTilesCount(board)
 }
 
 const messageText = document.querySelector(".subtext")
@@ -111,8 +107,12 @@ function checkGameEnd() {
     messageText.textContent = "You lose."
     board.forEach((row) => {
       row.forEach((tile) => {
-        if (tile.status === TILE_STATUSES.MARKED) markTile(tile)
-        if (tile.mine) revealTile(board, tile)
+        if (tile.status === TILE_STATUSES.MARKED) {
+          return (board = markTile(board, tile))
+        }
+        if (tile.mine) {
+          return (board = revealTile(board, tile))
+        }
       })
     })
     setTimeout(() => {
@@ -121,7 +121,7 @@ function checkGameEnd() {
   }
 }
 
-/** Interrumpa la propagación de eventos para evitar que el jugador pueda hacer click izquierdo o derecho luego de haber ganado o perdido. */
+/** Interrumpe la propagación de eventos para evitar que el jugador pueda hacer click izquierdo o derecho luego de haber ganado o perdido. */
 function stopPropagation(e) {
   e.stopImmediatePropagation()
 }
