@@ -42,6 +42,7 @@ export function checkWin(board) {
   })
 }
 
+/** Valida si hay alguna baldosa relevada que contenga una mina. */
 export function checkLose(board) {
   return board.some((row) => {
     return row.some((tile) => tile.status === TILE_STATUSES.MINE)

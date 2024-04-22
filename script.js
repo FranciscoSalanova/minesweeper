@@ -127,7 +127,7 @@ function stopPropagation(e) {
 }
 
 /** Devuelve un array con las posiciones (x, y) de las minas en la grilla. */
-function getMinePositions(boardSize, numberOfMines) {
+export function getMinePositions(boardSize, numberOfMines) {
   const positions = []
 
   while (positions.length < numberOfMines) {
