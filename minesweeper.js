@@ -49,10 +49,6 @@ export function checkLose(board) {
   })
 }
 
-export function positionMatch(posA, posB) {
-  return posA.x === posB.x && posA.y === posB.y
-}
-
 /** Marca la baldosa cliqueada (click derecho). */
 export function markTile(board, { x, y }) {
   const tile = board[x][y]
@@ -129,4 +125,8 @@ function nearbyTiles(board, { x, y }) {
       })
     })
     .filter((tile) => tile != null)
+}
+
+export function positionMatch(posA, posB) {
+  return posA.x === posB.x && posA.y === posB.y
 }
