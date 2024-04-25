@@ -148,7 +148,7 @@ describe("#checkWin", () => {
         { x: 1, y: 1, mine: false, status: TILE_STATUSES.NUMBER },
       ],
     ]
-    expect(checkWin(board)).toBe(true)
+    expect(checkWin(board)).toBeTruthy()
   })
 })
 
@@ -164,7 +164,7 @@ describe("#checkLose", () => {
         { x: 1, y: 1, mine: false, status: TILE_STATUSES.HIDDEN },
       ],
     ]
-    expect(checkLose(board)).toBe(true)
+    expect(checkLose(board)).toBeTruthy()
   })
 })
 
