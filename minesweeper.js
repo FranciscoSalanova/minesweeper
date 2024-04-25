@@ -21,6 +21,7 @@ export function createBoard(boardSize, minePositions) {
   }, boardSize)
 }
 
+/** Devuelve la cantidad de baldosas que fueron marcadas. */
 export function markedTilesCount(board) {
   return board.reduce((count, row) => {
     return (
@@ -29,6 +30,7 @@ export function markedTilesCount(board) {
   }, 0)
 }
 
+/** Valida si todas las baldosas que NO contienen minas fueron reveladas o fueron marcadas. */
 export function checkWin(board) {
   return board.every((row) => {
     return row.every((tile) => {
@@ -75,11 +77,13 @@ export function markTile(board, { x, y }) {
   }
 }
 
-/** Revela el contenido de la baldosa cliqueada. */
+/** Devuele un nuevo tablero revelando el contenido de la baldosa cliqueada y las adyacentes según corresponda. */
 export function revealTile(board, { x, y }) {
   const tile = board[x][y]
 
-  if (tile.status !== TILE_STATUSES.HIDDEN) return board
+  if (tile.status !== TILE_STATUSES.HIDDEN) {
+    return board
+  }
 
   if (tile.mine) {
     return replaceTile(board, { x, y }, { ...tile, status: TILE_STATUSES.MINE })
@@ -100,6 +104,10 @@ export function revealTile(board, { x, y }) {
   }
 
   return newBoard
+}
+
+export function positionMatch(posA, posB) {
+  return posA.x === posB.x && posA.y === posB.y
 }
 
 /** Devuelve una nueva baldosa que incluye la modificación de estado. */
@@ -125,8 +133,4 @@ function nearbyTiles(board, { x, y }) {
       })
     })
     .filter((tile) => tile != null)
-}
-
-export function positionMatch(posA, posB) {
-  return posA.x === posB.x && posA.y === posB.y
 }

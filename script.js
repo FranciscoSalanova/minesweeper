@@ -9,14 +9,11 @@ import {
   markedTilesCount,
 } from "./minesweeper.js"
 
-const BOARD_SIZE = 10
+const BOARD_SIZE = 3
 const NUMBER_OF_MINES = 1
 
 const title = document.querySelector(".title")
-title.addEventListener("click", () => {
-  window.location.reload()
-})
-
+const messageText = document.querySelector(".subtext")
 const boardElement = document.querySelector(".board")
 boardElement.style.setProperty("--size", BOARD_SIZE)
 const mineCount = document.querySelector("[data-mine-count]")
@@ -86,8 +83,6 @@ function listMinesLeft() {
   mineCount.textContent = NUMBER_OF_MINES - markedTilesCount(board)
 }
 
-const messageText = document.querySelector(".subtext")
-
 /** Función que maneja lo que debe pasar cuando finaliza el juego, sea que el jugador haya ganado o haya perdido. */
 function checkGameEnd() {
   const win = checkWin(board)
@@ -148,3 +143,7 @@ export function getMinePositions(boardSize, numberOfMines) {
 function randomNumber(size) {
   return Math.floor(Math.random() * size)
 }
+
+title.addEventListener("click", () => {
+  window.location.reload()
+})
