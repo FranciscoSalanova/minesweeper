@@ -9,20 +9,23 @@ import {
   markedTilesCount,
 } from "./minesweeper.js"
 
-const BOARD_SIZE = 3
-const NUMBER_OF_MINES = 1
+let testBoard
+if (process.env.NODE_ENV !== "production" && window.testBoard) {
+  testBoard = window.testBoard
+}
 
-const title = document.querySelector(".title")
+const BOARD_SIZE = testBoard?.length ?? 10
+const NUMBER_OF_MINES = testBoard.flat().filter((t) => t.mine).length ?? 3
+
 const messageText = document.querySelector(".subtext")
 const boardElement = document.querySelector(".board")
 boardElement.style.setProperty("--size", BOARD_SIZE)
 const mineCount = document.querySelector("[data-mine-count]")
 mineCount.textContent = NUMBER_OF_MINES
 
-let board = createBoard(
-  BOARD_SIZE,
-  getMinePositions(BOARD_SIZE, NUMBER_OF_MINES)
-)
+let board =
+  testBoard ??
+  createBoard(BOARD_SIZE, getMinePositions(BOARD_SIZE, NUMBER_OF_MINES))
 render()
 
 /** Renderiza un nuevo tablero cada vez que haya que mostrar un cambio en el juego. */
@@ -110,9 +113,6 @@ function checkGameEnd() {
         }
       })
     })
-    setTimeout(() => {
-      window.location.reload()
-    }, 10000)
   }
 }
 
@@ -143,7 +143,3 @@ export function getMinePositions(boardSize, numberOfMines) {
 function randomNumber(size) {
   return Math.floor(Math.random() * size)
 }
-
-title.addEventListener("click", () => {
-  window.location.reload()
-})
